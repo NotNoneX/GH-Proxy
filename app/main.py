@@ -34,7 +34,7 @@ pass_list = '''
 
 HOST = '127.0.0.1'  # 监听地址，建议监听本地然后由web服务器反代
 PORT = 80  # 监听端口
-ASSET_URL = 'https://hunshcn.github.io/gh-proxy'  # 主页
+ASSET_URL = 'https://crazypeace.github.io/gh-proxy/'  # 主页
 
 white_list = [tuple([x.replace(' ', '') for x in i.split('/')]) for i in white_list.split('\n') if i]
 black_list = [tuple([x.replace(' ', '') for x in i.split('/')]) for i in black_list.split('\n') if i]
@@ -48,6 +48,10 @@ exp2 = re.compile(r'^(?:https?://)?github\.com/(?P<author>.+?)/(?P<repo>.+?)/(?:
 exp3 = re.compile(r'^(?:https?://)?github\.com/(?P<author>.+?)/(?P<repo>.+?)/(?:info|git-).*$')
 exp4 = re.compile(r'^(?:https?://)?raw\.(?:githubusercontent|github)\.com/(?P<author>.+?)/(?P<repo>.+?)/.+?/.+$')
 exp5 = re.compile(r'^(?:https?://)?gist\.(?:githubusercontent|github)\.com/(?P<author>.+?)/.+?/.+$')
+exp6 = re.compile(r'^(?:https?://)?github\.com/.+?/.+?/tags.*$')
+exp7 = re.compile(r'^(?:https?://)?api\.github\.com/.*$')
+exp8 = re.compile(r'^(?:https?://)?git\.io/.*$')
+exp9 = re.compile(r'^(?:https?://)?gitlab\.com/.*$')
 
 requests.sessions.default_headers = lambda: CaseInsensitiveDict()
 
@@ -107,7 +111,7 @@ def iter_content(self, chunk_size=1, decode_unicode=False):
 
 
 def check_url(u):
-    for exp in (exp1, exp2, exp3, exp4, exp5):
+    for exp in (exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8, exp9):
         m = exp.match(u)
         if m:
             return m
@@ -116,6 +120,24 @@ def check_url(u):
 
 @app.route('/<path:u>', methods=['GET', 'POST'])
 def handler(u):
+    // 判断有没有嵌套自己调用自己
+    exp0 = f'{request.url_root}/'
+    while u.startswith(exp0):    
+        u = u.replace(exp0, '')
+    
+    if u == 'perl-pe-para':
+      perl_str = 'perl -pe'
+      origin = f"{request.scheme}://{request.host}"
+      response_text = (f's#(bash.*?\\.sh)([^/\\w\\d])#\\1 | {perl_str} "\\$(curl -L {origin}/perl-pe-para)" \\2#g; '
+                      f's# (git)# https://\\1#g; '
+                      f's#(http.*?git[^/]*?/)#{origin}/\\1#g')
+      
+      return Response(response_text, status=200, 
+                     headers={
+                         'Content-Type': 'text/plain',
+                         'Cache-Control': 'max-age=300'
+                     })
+
     u = u if u.startswith('http') else 'https://' + u
     if u.rfind('://', 3, 9) == -1:
         u = u.replace('s:/', 's://', 1)  # uwsgi会将//传递为/
