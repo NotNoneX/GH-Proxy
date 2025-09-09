@@ -120,11 +120,13 @@ def check_url(u):
 
 @app.route('/<path:u>', methods=['GET', 'POST'])
 def handler(u):
-    // 判断有没有嵌套自己调用自己
+    # 判断有没有嵌套自己调用自己
     exp0 = f'{request.url_root}/'
     while u.startswith(exp0):    
         u = u.replace(exp0, '')
     
+    # 处理shell脚本中嵌套调用github资源的情况
+    # https://zelikk.blogspot.com/search/label/ghproxy
     if u == 'perl-pe-para':
       perl_str = 'perl -pe'
       origin = f"{request.scheme}://{request.host}"
