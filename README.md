@@ -1,6 +1,89 @@
 # gh-proxy
 
-## 我的修改
+本项目是一个解决github脚本和资源访问不通问题的方案, 示例  
+https://youtu.be/F9re4Tuy7BA
+
+可以对github脚本的无限嵌套调用提供解决方案, 示例  
+https://youtu.be/5zCJsCoi_lQ
+
+## 免费使用 cloudflare worker 搭后端服务
+
+注册 Cloudflare 用户, 略
+
+创建 worker
+
+<img width="950" height="633" alt="image" src="https://github.com/user-attachments/assets/790c36b5-aeb8-4952-8026-e7050636b6e1" />
+
+<img width="850" height="678" alt="image" src="https://github.com/user-attachments/assets/d3400eff-4d59-4f51-999b-027759afefb1" />
+
+<img width="933" height="825" alt="image" src="https://github.com/user-attachments/assets/457aaf89-059c-46b4-a44d-d7629730df3a" />
+
+修改 worker 的代码
+
+<img width="966" height="420" alt="image" src="https://github.com/user-attachments/assets/dda591ab-ac2b-41f8-8c3c-c7cb4e587ae8" />
+
+默认内容全部删掉
+
+<img width="788" height="683" alt="image" src="https://github.com/user-attachments/assets/201e4b11-ae2f-43c2-9dbe-4f7ffc863f62" />
+
+把本项目的 worker.js 内容复制粘贴过去  
+https://github.com/crazypeace/gh-proxy/raw/refs/heads/master/worker.js
+
+右上角 Deploy 部署
+
+<img width="1310" height="631" alt="image" src="https://github.com/user-attachments/assets/c47dd616-84d2-4256-95ce-445200de8aef" />
+
+这样, 你就得到了一个 ghproxy 后端  
+https://worker项目名.cloudflare用户名.workers.dev/ 
+
+请注意, 在你想使用本项目的环境中, 检测一下能否访问ghproxy后端, 比如
+```
+curl -L https://worker项目名.cloudflare用户名.workers.dev/ 
+```
+如果不行, 你需要给你的 worker 套上你自己的域名.  
+参考教程  
+https://zelikk.blogspot.com/2022/05/domain-cloudflare-worker-dev.html
+
+
+## 用 python 搭后端服务
+python环境
+```
+apt install -y python3-pip
+pip3 install flask requests --break-system-packages
+```
+下载 ghproxy 文件
+```
+wget https://github.com/crazypeace/gh-proxy/raw/refs/heads/master/app/main.py
+wget https://github.com/crazypeace/gh-proxy/raw/refs/heads/master/app/uwsgi.ini
+```
+修改 main.py
+
+<img width="869" height="133" alt="image" src="https://github.com/user-attachments/assets/a310854d-b0ff-4dd9-b373-03925484b390" />
+
+图中的修改方式 有点"危险". 适合你自己临时跑起来, 用完了就关.  
+长期使用的话, 还是要前面加个比如 caddy 套 https 然后反代.
+
+## 使用方式
+
+用下面这样的方式转换 github 一键脚本命令.   
+举例, 假如你的ghproxy后端地址是 `https://ghproxy.crazypeace.workers.dev/` 那么,  
+转换前
+```
+bash <(wget -qO- -o- https://git.io/v2ray.sh)
+```
+转换后
+```
+bash <(wget -qO- -o- https://ghproxy.crazypeace.workers.dev/https://git.io/v2ray.sh | perl -pe "$(curl -L https://ghproxy.crazypeace.workers.dev/perl-pe-para)")
+```
+
+为了方便使用，做了个工具页面  
+https://crazypeace.github.io/gh-proxy/
+
+操作演示  
+https://youtu.be/Cf5tWuGMm6U?si=Ne2odu_PKgJJX9Tc&t=164
+
+
+## 本项目相对于源项目的修改
 [增加支持 api.github.com](https://zelikk.blogspot.com/2023/03/github-proxy-api-github-com.html)
 
 增加支持 git.io
@@ -29,7 +112,7 @@ https://zelikk.blogspot.com/2023/07/replit-gh-proxy.html
 https://zelikk.blogspot.com/search/label/ghproxy
 
 <details>
-    <summary>原项目readme (点击展开)</summary>
+    <summary>源项目readme (点击展开)</summary>
   
 ## 简介
 
