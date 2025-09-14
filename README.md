@@ -63,6 +63,16 @@ wget https://github.com/crazypeace/gh-proxy/raw/refs/heads/master/app/uwsgi.ini
 图中的修改方式 有点"危险". 适合你自己临时跑起来, 用完了就关.  
 长期使用的话, 还是要前面加个比如 caddy 套 https 然后反代.
 
+启动 
+```
+python3 ./main.py
+```
+
+这样你就得到了一个 ghproxy 后端
+```
+http://你的IP:8000/
+```
+
 ## 使用方式
 
 用下面这样的方式转换 github 一键脚本命令.   
@@ -78,6 +88,8 @@ bash <(wget -qO- -o- https://ghproxy.crazypeace.workers.dev/https://git.io/v2ray
 
 为了方便使用，做了个工具页面  
 https://crazypeace.github.io/gh-proxy/
+
+注意页面底部的 "Github Proxy 后端" 填写正确的内容
 
 操作演示  
 https://youtu.be/Cf5tWuGMm6U?si=Ne2odu_PKgJJX9Tc&t=164
