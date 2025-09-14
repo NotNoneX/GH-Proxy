@@ -140,6 +140,10 @@ def handler(u):
                          'Cache-Control': 'max-age=300'
                      })
 
+    # 请求工具页面的css和js文件
+    if u == 'styles.css' or u == 'main.js':
+        return proxy( ASSET_URL + u)
+
     u = u if u.startswith('http') else 'https://' + u
     if u.rfind('://', 3, 9) == -1:
         u = u.replace('s:/', 's://', 1)  # uwsgi会将//传递为/
